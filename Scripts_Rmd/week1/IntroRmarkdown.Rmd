@@ -1,0 +1,231 @@
+---
+title: "IntroRmarkdown"
+author: "Nicholas Baetge"
+date: "8/26/2020"
+output: 
+  html_document: default
+  github_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**This document was adapted from ESM206**
+
+### Objectives 
+
+- RMarkdown introduction (creating, some formatting, knitting)
+- Data wrangling continued (rename, group_by, summarize)
+
+### 1. What is markdown? 
+
+Introduce markdown. Point out differences between markdown and scripts. Why is this useful? Document preparation + embedded code - you can do everything in the same place (write, analyze, produce final figures...). That means better reproducibility.
+
+### 2. Some basics in markdown formatting...
+
+# One pound sign: Large heading
+## More means smaller headings
+
+Just writing text is regular text
+
+We can *italicize* using a single asterisk
+Or **bold** using double asterisks
+
+1. Or
+2. make
+3. numbered
+4. lists
+
+And when we're ready to prepare a report, we press KNIT to convert to a supported document type (today we'll use knitting to HTML)
+
+But we can do all of that in a Word document. Why is markdown special? Because it allows us to do **all of our writing and data analysis and data visualization in the SAME PLACE!** Can you imagine not having 15 files with your different analyses, and a different Word document with your text, and different files for all of your figures? That is not an easy way to reproduce computational data science...
+
+### 3. Embedding code into Rmarkdown (+ data wrangling review)
+
+To add code in Rmarkdown, Insert an R code chunk (Insert > R) (or shortcut command + shift + i on Mac; control + alt + i in Windows). You will see a new shaded region appear. That's where you'll include any active code AND commenting (you can treat these shaded areas like you would a script). 
+
+First, let's load the tidyverse and our CAL FIRE data. 
+
+```{r}
+
+####### This area works like a script:
+
+library(tidyverse) # Loads the tidyverse
+library(RColorBrewer) # (just for my graph example)
+library(lubridate) # mess with time!
+library(readxl) # Allows loading of excel files
+
+calfire.data <- read_excel("~/GITHUB/eemb144l/Input_Data/week1/2013_2019_CALFIRE_Redbook.xlsx", sheet = "Data") # read in the data (use ":" and "/" or "\" on windows)
+
+calfire.metadata <- read_excel("~/GITHUB/eemb144l/Input_Data/week1/2013_2019_CalFire_Redbook.xlsx", sheet = "Metadata")  # read in the metadata
+
+####### Basic data exploration:
+
+View(calfire.data)
+names(calfire.data)
+summary(calfire.data) 
+
+```
+
+Looks like it loaded successfully. We're only really interested in five variables: county (County_Unit), fire (Fire_Name), start (Start_Date),  total acres burned (Total_Acres_Burned), and cause (Cause).
+
+First, let's do the following:
+(1) Select only those columns
+(2) Rename the columns to something shorter
+
+Then, let's:
+(1) Restrict our data to the Southern California coast (incl Thomas Fire)
+(2) Add a column that represents the year the fire took place
+(3) Change the county representing the Thomas Fire from "Ventura/Santa Barbara" to "Ventura"
+
+
+```{r}
+
+calfire_subset <- calfire.data %>% 
+  select(County_Unit, Fire_Name, Start_Date, Controlled_Date, Total_Acres_Burned, Cause) %>% 
+  rename(county = County_Unit, fire = Fire_Name, start = Start_Date, end = Controlled_Date, acres = Total_Acres_Burned, cause = Cause) %>% 
+  filter(county %in% c("SANTA BARBARA", "VENTURA", "LOS ANGELES", "ORANGE", "SAN DIEGO") | fire == "THOMAS") %>% 
+   mutate(year = year(start),
+          county = ifelse(fire == "THOMAS", "VENTURA", county))
+
+View(calfire_subset)
+
+```
+
+Now I'm back to working just in the document again. Remember to knit frequently to see what happens.
+
+What if I don't want my code or messages/outputs to show up in my knitted document? Then in the chunk header I can use things like 'echo = FALSE', 'message = FALSE', results = "hide". Let's see what happens:
+
+```{r}
+
+# Show what happens when you add the lines above and knit...
+names(calfire_subset)
+
+```
+
+Now that entire code + results is hidden in the knitted document. Here, direct them to the RCheatsheets (Help > Cheatsheets). 
+
+### 4. Summary statistics and group_by()
+
+Let's say that for our data, I want to find the TOTAL acres burned in each county. I could create subsets for each of the counties, then use whatever function I wanted on the 'acres' column. Instead, we can ask R to add "behind the scenes" grouping to the data, then calculate summary statistics using 'summarize' and whichever summary statistics you want to find. 
+
+```{r}
+
+summary <- calfire_subset %>% 
+  group_by(county) %>% 
+  summarize(
+    total_acres = sum(acres)
+  ) %>% 
+  arrange(-total_acres)
+
+summary
+
+```
+
+You can also group by multiple variables (e.g. if we had years, we could group by county THEN by years, and we'd get a summary for acres burned by county and years). 
+
+```{r}
+county_year_summary <- calfire_subset %>% 
+  group_by(county, year) %>% 
+  summarize(
+    total_acres = sum(acres)
+  ) %>% 
+  ungroup() %>% 
+  arrange(-year, -total_acres) 
+
+county_year_summary
+```
+
+
+What if I want to export that data frame as its own file (csv)? Use write_csv to send it to your working directory. 
+
+```{r}
+
+write_csv(county_year_summary, "~/GITHUB/eemb144l/Output_Data/summary.csv")
+
+```
+
+Notice that it shows up where you put it! Then you can copy/paste/email whatever. 
+
+Let's make a column graph of the total acres burned by cause
+
+```{r}
+
+
+col.plot <- ggplot(summary, 
+                     aes(x = county, 
+                         y = total_acres)) +
+  geom_col() +
+  labs(x = "County", y = "Total Acres Burned") +
+  coord_flip() 
+
+col.plot
+
+# Notice if we do this, it just puts them in alphabetical order. If we want it to stay in the order from high to low, we need to reassign the causes as factors and explicitly set the levels (see below)
+
+summary_factor <- summary %>% 
+  mutate(county = factor(county, levels = county))
+
+# NOW we can plot and that order will be retained...
+```
+
+```{r fig.width = 6, fig.height = 4}
+
+ordered.plot <- ggplot(summary_factor, aes(x = county, y = total_acres)) +
+  geom_col(aes(fill = county), show.legend = FALSE) +
+  coord_flip() +
+  scale_fill_brewer(palette = "Spectral") + # Note: need package RColorBrewer
+  theme_classic() +
+  scale_x_discrete(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "", y = "Total Acres Burned", title = "Total Acres Burned 2014 - 2018") 
+
+ordered.plot
+
+```
+
+
+
+Notice that when we knit, it shows up in that document (so we can embed final figures in a document, which will be automatically updated if we change our data/analyses/code...). 
+
+Want to change the size of the final figure in the knitted document? You can add fig.width or fig.height to the chunk header to specify (inches is default). 
+
+### 5. The datasets package and a boxplot
+
+Want to do some practice with data analysis but don't want to deal with loading data every time? There are some datasets that exist in R for just that purpose. 
+
+You can find them using library(help = "datasets")...(run that in the console window). There are some pretty fun ones to practice with. 
+
+Let's check out one of them: InsectSprays
+Use ?InsectSprays in the console to bring up information about the dataset
+
+We want to make a boxplot (a different box + whisker for each of the different insect sprays)
+
+```{r}
+
+insect_boxplot <- ggplot(InsectSprays, aes(x = spray, y = count)) +
+  geom_boxplot(fill = "gray90") +
+  theme_classic() +
+  labs(x = "Spray Type", y = "Insect Counts") +
+  geom_jitter(width = 0.1, alpha = 0.4, aes(color = spray))
+
+insect_boxplot
+
+```
+
+To end: close entire project, reopen, run code: show how easy it is to recreate EVERYTHING just by running the entire code. 
+
+IF extra time: explore the 'faithful' dataset (use ?faithful). In ggplot, create a scatterplot of waiting time (x) versus eruption duration (y), and customize. 
+
+```{r}
+
+faithful_plot <- ggplot(faithful, aes(x = waiting, y = eruptions)) +
+  geom_point() +
+  theme_classic()
+
+faithful_plot
+  
+# Always ask yourself: What are the major takeaways?
+
+```

@@ -1,8 +1,9 @@
 ##### TITLE #####
-# EEMB 144L LAB 1
+# EEMB 144L Intro to R with CAL FIRE Major Fires 2013 - 2019 Dataset
 # Nicholas Baetge
 # 8/21/20
 
+#This document was adapted from ESM 206
 
 ##### Intro to RStudio Environment #####
 
@@ -48,11 +49,11 @@ library(tidyverse)
 library(readxl)
 
 # unlike .csv files, .xlsx files can have multiple sheets
-excel_sheets("Input_Data/2013_2019_CalFire_Redbook.xlsx") #let's see what the excel sheets are called
+excel_sheets("Input_Data/week1/2013_2019_CalFire_Redbook.xlsx") #let's see what the excel sheets are called
 
-calfire.data <- read_excel("Input_Data/2013_2019_CalFire_Redbook.xlsx", sheet = "Data") # we can store each sheet separately as a dataframe! this one is the data
+calfire.data <- read_excel("Input_Data/week1/2013_2019_CalFire_Redbook.xlsx", sheet = "Data") # we can store each sheet separately as a dataframe! this one is the data
 
-calfire.metadata <- read_excel("Input_Data/2013_2019_CalFire_Redbook.xlsx", sheet = "Metadata")  # this one is the metadata
+calfire.metadata <- read_excel("Input_Data/week1/2013_2019_CalFire_Redbook.xlsx", sheet = "Metadata")  # this one is the metadata
 
 ##### Initial data exploration #####
 
@@ -78,7 +79,7 @@ max_str_des <- max(calfire.data$Structures_Destroyed, na.rm = T) # this is a goo
 
 ##### Basic data wrangling (dplyr functions) #####
 
-df1 <- select(calfire.data, County_Unit:Controlled_Date, Total_Acres_Burned:Civil_Fatalities) # Only select columns from CountyUnit through Controlled_Date and Total_Acres_Burnedthrough Civil_Fatalities in calfire.data, store as a new data frame 'df1'
+df1 <- select(calfire.data, County_Unit:Controlled_Date, Total_Acres_Burned:Civil_Fatalities) # Only select columns from CountyUnit through Controlled_Date and Total_Acres_Burned through Civil_Fatalities in calfire.data, store as a new data frame 'df1'
 View(df1) # Remember to look at it!
 
 
@@ -107,7 +108,7 @@ View(df6)
 
 ##### Introduction to piping #####
 
-# In the example above, we wrote a separate line of code for each operation to manipulate the CalFire data. That's good in some ways, but tedious in others. 
+# In the example above, we wrote a separate line of code for each operation to manipulate the CAL FIRE data. That's good in some ways, but tedious in others. 
 
 # What if we wanted to restrict our data to the southern CA coast, exclude fires that burned less that 500 acres, add a column that sums the human fatalities after changing NAs to 0s, add another column that computes the duration of each fire in days, arrange the data from most recent to most distant fires AND by total acreage burned, and then designate the Thomas Fire as a Ventura County fire? We could follow the same process as above, or we can use piping. 
 
