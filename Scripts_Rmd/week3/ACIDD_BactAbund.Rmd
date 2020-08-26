@@ -1,0 +1,81 @@
+---
+title: "ACIDD Experiment Bacterial Abundance"
+author: "Nicholas Baetge"
+date: "8/26/2020"
+output: github_document
+---
+
+# Intro
+
+This document shows how **individual bottle** bacterial abundance data from ACIDD remineralization bioassays were processed, QC'd, and analyzed. 
+
+```{r message = F, warning = F}
+library(tidyverse) 
+library(readxl)
+library(lubridate)
+```
+
+# Import data
+
+Our data exists in two separate sheets of an excel file. We'll take a look at what is in those sheets and combine the data using a "join" function
+
+```{r}
+excel_sheets("~/GITHUB/eemb144l/Input_Data/week3/ACIDD_Exp_BactAbund.xlsx") #let's see what the excel sheets are called
+
+metadata <- read_excel("~/GITHUB/eemb144l/Input_Data/week3/ACIDD_Exp_BactAbund.xlsx", sheet = "Metadata") #import the first sheet containing metadata
+names(metadata)
+
+data <- read_excel("~/GITHUB/eemb144l/Input_Data/week3/ACIDD_Exp_BactAbund.xlsx", sheet = "Data") #import the second sheet containing the cell abundances
+names(data)
+
+joined <- left_join(metadata, data)
+names(joined)
+summary(joined)
+View(joined)
+
+
+```
+
+So it looks like there are two experiments, each with the same design, but conducted in two different locations, in San Diego and in Santa Barbara.
+
+# Prepare data
+
+Let's convert the date and time column values from characters to dates, add a column with the time elasped for each experiment (in days), and convert cells/ml to cell/L, and then rearrange our columns, removing columns we don't need
+
+```{r warning = F}
+cells <- joined %>% 
+  mutate(Datetime = ymd_hm(Datetime),
+         cells = Cells_ml * 1000,
+         sd_cells = Cells_ml_sd * 1000) %>% 
+  group_by(Experiment, Bottle) %>% 
+  mutate(interv = interval(first(Datetime), Datetime), 
+         hours = interv/3600,
+         days = hours/24) %>% 
+  ungroup() %>% 
+  select(Experiment:Datetime, TOC_Sample:Nutrient_Sample, hours, days, cells, sd_cells) %>%
+  drop_na(cells)
+``` 
+
+# Plot the growth curves
+
+```{r  fig.height = 4, fig.width = 10, fig.align = "center"}
+
+custom.colors <- c("Control" = "#377EB8", "Ash" = "#4DAF4A", "Santa Barbara" = "#E41A1C", "San Diego" = "#FF7F00")
+levels <- c("Control", "Ash")
+
+cells %>% 
+  mutate(dna = ifelse(DNA_Sample == T, "*", NA)) %>% 
+  group_by(Experiment, Bottle) %>%
+  ggplot(aes(x = days , y = cells, group = interaction(Experiment, Treatment, Bottle))) + 
+  geom_errorbar(aes(ymin = cells - sd_cells, ymax = cells + sd_cells, color = factor(Treatment, levels = levels)), width = 0.1) +
+  geom_line(aes(color = factor(Treatment, levels = levels)), size = 1, alpha = 0.7) +
+  geom_point(aes(fill = factor(Treatment, levels = levels)), size = 3, shape = 21, alpha = 0.7 ) +
+  geom_text(aes(label = dna), size = 12, color = "#E41A1C", alpha = 0.6) +
+  scale_color_manual(values = custom.colors) +
+  scale_fill_manual(values = custom.colors) +
+  facet_grid(~Location, scales = "free") +
+  labs(x = "Days", y = expression(paste("Cells, L"^-1))) +
+  theme_classic() +
+  theme(legend.title = element_blank()) +
+  guides(color = F, linetype = F)
+```
