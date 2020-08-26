@@ -2,9 +2,7 @@
 title: "IntroRmarkdown"
 author: "Nicholas Baetge"
 date: "8/26/2020"
-output: 
-  html_document: default
-  github_document: default
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
