@@ -295,7 +295,8 @@ Is this appropriate?
 
 ``` r
 bactcarbon <- growth %>%
-  mutate(delta_bc = delta_cells * (2.5 * 10^-9))
+  mutate(bc = cells * (2.5 * 10^-9), 
+         delta_bc = delta_cells * (2.5 * 10^-9))
 
 View(bactcarbon)
 ```
@@ -308,6 +309,10 @@ View(bactcarbon)
 
 ``` r
 averages <- bactcarbon %>%
+  group_by(Experiment, Treatment, Timepoint) %>% 
+  mutate(ave_bc = mean(bc),
+         sd_bc = sd(bc)) %>% 
+  ungroup() %>% 
   group_by(Experiment, Treatment) %>% 
   mutate(ave_mew = mean(mew),
          sd_mew = sd(mew),
@@ -323,6 +328,23 @@ averages <- bactcarbon %>%
 ```
 
 # Plot treatment averages
+
+``` r
+averages %>% 
+  ggplot(aes(x = days , y = ave_bc, group = interaction(Experiment, Treatment))) + 
+  geom_errorbar(aes(ymin = ave_bc - sd_bc, ymax = ave_bc + sd_bc, color = factor(Treatment, levels = levels)), width = 0.1) +
+  geom_line(aes(color = factor(Treatment, levels = levels)), size = 1, alpha = 0.7) +
+  geom_point(aes(fill = factor(Treatment, levels = levels)), size = 3, shape = 21, alpha = 0.7 ) +
+  scale_color_manual(values = custom.colors) +
+  scale_fill_manual(values = custom.colors) +
+  facet_grid(~Location, scales = "free") +
+  labs(x = "Days", y = expression(paste("Bacterial Carbon, µmol C L"^-1))) +
+  theme_classic() +
+  theme(legend.title = element_blank()) +
+  guides(color = F, linetype = F)
+```
+
+<img src="ACIDD_BactAbund_files/figure-gfm/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
 We can generate some barplots of our averaged data
 
@@ -345,7 +367,7 @@ ggplot(aes(x = factor(Treatment, levels = levels), y =  ave_mew, group = interac
 mew
 ```
 
-![](ACIDD_BactAbund_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](ACIDD_BactAbund_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 doubling <- bar.data %>% 
@@ -391,7 +413,7 @@ library(patchwork)
 lag + delta_bc + mew + doubling  + plot_annotation(tag_levels = "a")
 ```
 
-![](ACIDD_BactAbund_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](ACIDD_BactAbund_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 # Save data
 
