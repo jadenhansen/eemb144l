@@ -352,8 +352,6 @@ custom.tab <- tax.df %>%
 
     ## Joining, by = "asv"
 
-    ## Warning in x:y: numerical expression has 17 elements: only the first used
-
 ``` r
 #save the row names and then make them into the column names
 colnames <- custom.tab[,1]
@@ -370,12 +368,13 @@ sweet.tab <- t_custom.tab %>%
   arrange(Location, Bottle, Timepoint)
 ```
 
-    ## Warning: The `.data` argument of `add_column()` must have unique names as of tibble 3.0.0.
-    ## Use `.name_repair = "minimal"`.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
-
     ## Joining, by = "sample"
+
+``` r
+#we can generate another table where we estimate the cell abunance of each ASV
+asv_abund <- sweet.tab %>% 
+  mutate_at(68:340, funs(.*cells))
+```
 
 ## Save
 
@@ -384,4 +383,5 @@ saveRDS(sweet.tab, "~/GITHUB/eemb144l/Output_Data/week6/Custom_ASV_Table.rds")
 saveRDS(sub_ps, "~/GITHUB/eemb144l/Output_Data/week6/phyloseq_obj.rds")
 saveRDS(rarefy_ps, "~/GITHUB/eemb144l/Output_Data/week6/rarefied_phyloseq_obj.rds")
 saveRDS(alphadiv, "~/GITHUB/eemb144l/Output_Data/week6/alphadiv.rds")
+saveRDS(asv_abund, "~/GITHUB/eemb144l/Output_Data/week6/ASV_Abundance_Table.rds")
 ```

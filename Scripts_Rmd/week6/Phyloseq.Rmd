@@ -290,7 +290,7 @@ ps_std.df = as.data.frame(ps_std.tab)
 
 Create a new table that combines relative abundances with the taxa table
 
-```{r}
+```{r warning = F}
 #first coerce the taxa table into a data frame
 tax.df = as.data.frame(tax.tab) 
 #then combine the data frames
@@ -315,6 +315,12 @@ sweet.tab <- t_custom.tab %>%
   left_join(., sample.tab %>% rownames_to_column(., var = "sample")) %>% 
   select(sample, Experiment:sd_bge, everything()) %>% 
   arrange(Location, Bottle, Timepoint)
+
+#we can generate another table where we estimate the cell abunance of each ASV
+asv_abund <- sweet.tab %>% 
+  mutate_at(68:340, funs(.*cells))
+
+
 ```
 
 ## Save
@@ -324,6 +330,7 @@ saveRDS(sweet.tab, "~/GITHUB/eemb144l/Output_Data/week6/Custom_ASV_Table.rds")
 saveRDS(sub_ps, "~/GITHUB/eemb144l/Output_Data/week6/phyloseq_obj.rds")
 saveRDS(rarefy_ps, "~/GITHUB/eemb144l/Output_Data/week6/rarefied_phyloseq_obj.rds")
 saveRDS(alphadiv, "~/GITHUB/eemb144l/Output_Data/week6/alphadiv.rds")
+saveRDS(asv_abund, "~/GITHUB/eemb144l/Output_Data/week6/ASV_Abundance_Table.rds")
 
 ```
 
