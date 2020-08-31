@@ -40,7 +40,7 @@ names(metadata)
     ## [11] "Datetime"                "TOC_Sample"             
     ## [13] "DOC_Sample"              "Parallel_Sample"        
     ## [15] "Cell_Sample"             "DNA_Sample"             
-    ## [17] "Nutrient_Sample"
+    ## [17] "Nutrient_Sample"         "DNA_SampleID"
 
 ``` r
 data <- read_excel("~/GITHUB/eemb144l/Input_Data/week4/ACIDD_Exp_TOC.xlsx", sheet = "Data") #import the second sheet containing the cell abundances
@@ -68,9 +68,9 @@ names(joined)
     ## [11] "Datetime"                "TOC_Sample"             
     ## [13] "DOC_Sample"              "Parallel_Sample"        
     ## [15] "Cell_Sample"             "DNA_Sample"             
-    ## [17] "Nutrient_Sample"         "TOC"                    
-    ## [19] "TOC_sd"                  "PTOC"                   
-    ## [21] "PTOC_sd"
+    ## [17] "Nutrient_Sample"         "DNA_SampleID"           
+    ## [19] "TOC"                     "TOC_sd"                 
+    ## [21] "PTOC"                    "PTOC_sd"
 
 ``` r
 summary(joined)
@@ -108,14 +108,22 @@ summary(joined)
     ##                                                                 
     ##                                                                 
     ##                                                                 
-    ##       TOC         TOC_sd             PTOC          PTOC_sd      
-    ##  Min.   :69.00   Mode:logical   Min.   :64.44   Min.   :0.0200  
-    ##  1st Qu.:69.59   NA's:84        1st Qu.:68.74   1st Qu.:0.2625  
-    ##  Median :72.15                  Median :69.69   Median :0.4850  
-    ##  Mean   :72.87                  Mean   :70.44   Mean   :0.6075  
-    ##  3rd Qu.:75.62                  3rd Qu.:73.50   3rd Qu.:1.1000  
-    ##  Max.   :78.50                  Max.   :78.50   Max.   :1.3100  
-    ##  NA's   :76                     NA's   :64      NA's   :68
+    ##  DNA_SampleID            TOC         TOC_sd             PTOC      
+    ##  Length:84          Min.   :69.00   Mode:logical   Min.   :64.44  
+    ##  Class :character   1st Qu.:69.59   NA's:84        1st Qu.:68.74  
+    ##  Mode  :character   Median :72.15                  Median :69.69  
+    ##                     Mean   :72.87                  Mean   :70.44  
+    ##                     3rd Qu.:75.62                  3rd Qu.:73.50  
+    ##                     Max.   :78.50                  Max.   :78.50  
+    ##                     NA's   :76                     NA's   :64     
+    ##     PTOC_sd      
+    ##  Min.   :0.0200  
+    ##  1st Qu.:0.2625  
+    ##  Median :0.4850  
+    ##  Mean   :0.6075  
+    ##  3rd Qu.:1.1000  
+    ##  Max.   :1.3100  
+    ##  NA's   :68
 
 ``` r
 View(joined)
@@ -224,8 +232,8 @@ be only 4 points here, but this may be a useful exercise for your data.
     ## 
     ## Regression results
     ##   Method Intercept     Slope Angle (degrees) P-perm (1-tailed)
-    ## 1    OLS  20.53052 0.7106186        35.39831              0.16
-    ## 2     MA  20.05813 0.7171693        35.64693              0.16
+    ## 1    OLS  20.53052 0.7106186        35.39831              0.14
+    ## 2     MA  20.05813 0.7171693        35.64693              0.14
     ## 3    SMA  19.83558 0.7202554        35.76352                NA
     ## 
     ## Confidence intervals

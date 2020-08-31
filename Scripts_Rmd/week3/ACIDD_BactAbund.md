@@ -40,7 +40,7 @@ names(metadata)
     ## [11] "Datetime"                "TOC_Sample"             
     ## [13] "DOC_Sample"              "Parallel_Sample"        
     ## [15] "Cell_Sample"             "DNA_Sample"             
-    ## [17] "Nutrient_Sample"
+    ## [17] "Nutrient_Sample"         "DNA_SampleID"
 
 ``` r
 data <- read_excel("~/GITHUB/eemb144l/Input_Data/week3/ACIDD_Exp_BactAbund.xlsx", sheet = "Data") #import the second sheet containing the cell abundances
@@ -67,8 +67,8 @@ names(joined)
     ## [11] "Datetime"                "TOC_Sample"             
     ## [13] "DOC_Sample"              "Parallel_Sample"        
     ## [15] "Cell_Sample"             "DNA_Sample"             
-    ## [17] "Nutrient_Sample"         "Cells_ml"               
-    ## [19] "Cells_ml_sd"
+    ## [17] "Nutrient_Sample"         "DNA_SampleID"           
+    ## [19] "Cells_ml"                "Cells_ml_sd"
 
 ``` r
 summary(joined)
@@ -106,14 +106,14 @@ summary(joined)
     ##                                                                 
     ##                                                                 
     ##                                                                 
-    ##     Cells_ml        Cells_ml_sd    
-    ##  Min.   :  98300   Min.   : 10500  
-    ##  1st Qu.: 134750   1st Qu.: 23475  
-    ##  Median : 194000   Median : 34150  
-    ##  Mean   : 318410   Mean   : 46560  
-    ##  3rd Qu.: 413750   3rd Qu.: 66100  
-    ##  Max.   :1110000   Max.   :125000  
-    ##  NA's   :32        NA's   :32
+    ##  DNA_SampleID          Cells_ml        Cells_ml_sd    
+    ##  Length:84          Min.   :  98300   Min.   : 10500  
+    ##  Class :character   1st Qu.: 134750   1st Qu.: 23475  
+    ##  Mode  :character   Median : 194000   Median : 34150  
+    ##                     Mean   : 318410   Mean   : 46560  
+    ##                     3rd Qu.: 413750   3rd Qu.: 66100  
+    ##                     Max.   :1110000   Max.   :125000  
+    ##                     NA's   :32        NA's   :32
 
 ``` r
 View(joined)

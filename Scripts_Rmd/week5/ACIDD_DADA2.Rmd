@@ -277,15 +277,16 @@ create a table out of the taxa data (one with the sequences and assigments, one 
 these are the tables you want to save!!
 
 ```{r}
-write.table(t(seqtab.nochim), "~/GITHUB/eemb144l/Output_Data/week5/seqtab-nochimtaxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
-write.table(taxa,"~/GITHUB/eemb144l/Output_Data/week5/taxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
+saveRDS(t(seqtab.nochim), "~/GITHUB/eemb144l/Output_Data/week5/seqtab-nochimtaxa.rds")
+saveRDS(taxa,"~/GITHUB/eemb144l/Output_Data/week5/taxa.rds")
 
-write.table(t(seqtab.nochim), "~/GITHUB/eemb144l/Input_Data/week6/seqtab-nochimtaxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
-write.table(taxa,"~/GITHUB/eemb144l/Input_Data/week6/taxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
+saveRDS(t(seqtab.nochim), "~/GITHUB/eemb144l/Input_Data/week6/seqtab-nochimtaxa.rds")
+saveRDS(taxa,"~/GITHUB/eemb144l/Input_Data/week6/taxa.rds")
+
+
+
+
 ```
-
-
-
 
 
 
