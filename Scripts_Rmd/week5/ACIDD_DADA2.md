@@ -120,6 +120,8 @@ fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 filterAndTrim(fwd = file.path(fnFs), filt = fnFs.filtN, rev = file.path(fnRs), filt.rev = fnRs.filtN, maxN = 0)
 ```
 
+    ## Creating output directory: /Users/nicholasbaetge/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtN
+
 # Remove primers
 
 This part searches for primers in all the orientations and removes them
@@ -140,8 +142,8 @@ rbind(FWD.ForwardReads = sapply(FWD.orients, primerHits, fn = fnFs.filtN[[1]]),
 
     ##                  Forward Complement Reverse RevComp
     ## FWD.ForwardReads       0          0       0       0
-    ## FWD.ReverseReads       0          0       0       0
-    ## REV.ForwardReads       0          0       0       0
+    ## FWD.ReverseReads       0          0       0       2
+    ## REV.ForwardReads       0          0       0       3
     ## REV.ReverseReads       0          0       0       0
 
 At this point a 4X4 table is returned. If all the numbers are 0, then
@@ -199,9 +201,10 @@ sample.names <- sapply(strsplit(basename(fnFs),"_L"), `[`,1)
 sample.names
 ```
 
-    ##  [1] "ASH171-A6_S295"  "ASH171-AB0_S293" "ASH171-B6_S296"  "ASH171-C6_S297" 
-    ##  [5] "ASH171-CD0_S294" "ASH171-D6_S298"  "ASH172-A5_S301"  "ASH172-AB0_S299"
-    ##  [9] "ASH172-B5_S302"  "ASH172-C5_S303"  "ASH172-CD0_S300" "ASH172-D5_S304"
+    ##  [1] "ASH171-A0_S293" "ASH171-A6_S295" "ASH171-B0_S293" "ASH171-B6_S296"
+    ##  [5] "ASH171-C0_S294" "ASH171-C6_S297" "ASH171-D0_S294" "ASH171-D6_S298"
+    ##  [9] "ASH172-A0_S299" "ASH172-A5_S301" "ASH172-B0_S299" "ASH172-B5_S302"
+    ## [13] "ASH172-C0_S300" "ASH172-C5_S303" "ASH172-D0_S300" "ASH172-D5_S304"
 
 ``` r
 #create a "filtered" folder in the working directory as a place to put all the new filtered fastQ files
@@ -223,7 +226,11 @@ important for
 
 ``` r
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen = c(240,150),  maxN = 0, maxEE = c(2,2), truncQ = 2, rm.phix = TRUE, compress = TRUE) 
+```
 
+    ## Creating output directory: /Users/nicholasbaetge/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered
+
+``` r
 #look at the output. this tells you how many reads were removed. 
 readsinout <- out
 ```
@@ -252,13 +259,13 @@ the
 errF <- learnErrors(filtFs, multithread = TRUE)
 ```
 
-    ## 27657600 total bases in 115240 reads from 12 samples will be used for learning the error rates.
+    ## 38678400 total bases in 161160 reads from 16 samples will be used for learning the error rates.
 
 ``` r
 errR <- learnErrors(filtRs, multithread = TRUE)
 ```
 
-    ## 17286000 total bases in 115240 reads from 12 samples will be used for learning the error rates.
+    ## 24174000 total bases in 161160 reads from 16 samples will be used for learning the error rates.
 
 This took ~40s to run on a 2020 Macbook
 Pro
@@ -287,11 +294,15 @@ identical
 derepFs <- derepFastq(filtFs, verbose = TRUE)
 ```
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-A0_S293_F_filt.fastq
+
+    ## Encountered 7405 unique sequences from 12306 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-A6_S295_F_filt.fastq
 
     ## Encountered 5227 unique sequences from 8807 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-AB0_S293_F_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-B0_S293_F_filt.fastq
 
     ## Encountered 7405 unique sequences from 12306 total sequences read.
 
@@ -299,11 +310,15 @@ derepFs <- derepFastq(filtFs, verbose = TRUE)
 
     ## Encountered 5556 unique sequences from 9494 total sequences read.
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-C0_S294_F_filt.fastq
+
+    ## Encountered 6358 unique sequences from 11231 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-C6_S297_F_filt.fastq
 
     ## Encountered 5448 unique sequences from 10310 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-CD0_S294_F_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-D0_S294_F_filt.fastq
 
     ## Encountered 6358 unique sequences from 11231 total sequences read.
 
@@ -311,11 +326,15 @@ derepFs <- derepFastq(filtFs, verbose = TRUE)
 
     ## Encountered 4235 unique sequences from 8211 total sequences read.
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-A0_S299_F_filt.fastq
+
+    ## Encountered 7240 unique sequences from 11824 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-A5_S301_F_filt.fastq
 
     ## Encountered 4816 unique sequences from 7988 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-AB0_S299_F_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-B0_S299_F_filt.fastq
 
     ## Encountered 7240 unique sequences from 11824 total sequences read.
 
@@ -323,11 +342,15 @@ derepFs <- derepFastq(filtFs, verbose = TRUE)
 
     ## Encountered 4735 unique sequences from 8624 total sequences read.
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-C0_S300_F_filt.fastq
+
+    ## Encountered 6642 unique sequences from 10559 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-C5_S303_F_filt.fastq
 
     ## Encountered 4862 unique sequences from 9127 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-CD0_S300_F_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-D0_S300_F_filt.fastq
 
     ## Encountered 6642 unique sequences from 10559 total sequences read.
 
@@ -339,11 +362,15 @@ derepFs <- derepFastq(filtFs, verbose = TRUE)
 derepRs <- derepFastq(filtRs, verbose = TRUE)
 ```
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-A0_S293_R_filt.fastq
+
+    ## Encountered 6257 unique sequences from 12306 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-A6_S295_R_filt.fastq
 
     ## Encountered 4706 unique sequences from 8807 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-AB0_S293_R_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-B0_S293_R_filt.fastq
 
     ## Encountered 6257 unique sequences from 12306 total sequences read.
 
@@ -351,11 +378,15 @@ derepRs <- derepFastq(filtRs, verbose = TRUE)
 
     ## Encountered 5092 unique sequences from 9494 total sequences read.
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-C0_S294_R_filt.fastq
+
+    ## Encountered 5887 unique sequences from 11231 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-C6_S297_R_filt.fastq
 
     ## Encountered 4891 unique sequences from 10310 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-CD0_S294_R_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH171-D0_S294_R_filt.fastq
 
     ## Encountered 5887 unique sequences from 11231 total sequences read.
 
@@ -363,11 +394,15 @@ derepRs <- derepFastq(filtRs, verbose = TRUE)
 
     ## Encountered 4353 unique sequences from 8211 total sequences read.
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-A0_S299_R_filt.fastq
+
+    ## Encountered 6844 unique sequences from 11824 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-A5_S301_R_filt.fastq
 
     ## Encountered 4617 unique sequences from 7988 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-AB0_S299_R_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-B0_S299_R_filt.fastq
 
     ## Encountered 6844 unique sequences from 11824 total sequences read.
 
@@ -375,11 +410,15 @@ derepRs <- derepFastq(filtRs, verbose = TRUE)
 
     ## Encountered 3596 unique sequences from 8624 total sequences read.
 
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-C0_S300_R_filt.fastq
+
+    ## Encountered 6625 unique sequences from 10559 total sequences read.
+
     ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-C5_S303_R_filt.fastq
 
     ## Encountered 3582 unique sequences from 9127 total sequences read.
 
-    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-CD0_S300_R_filt.fastq
+    ## Dereplicating sequence entries in Fastq file: ~/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered/ASH172-D0_S300_R_filt.fastq
 
     ## Encountered 6625 unique sequences from 10559 total sequences read.
 
@@ -412,35 +451,43 @@ to see which sequences are real and which are not.
 dadaFs <- dada(derepFs, err = errF, multithread = TRUE)
 ```
 
-    ## Sample 1 - 8807 reads in 5227 unique sequences.
-    ## Sample 2 - 12306 reads in 7405 unique sequences.
-    ## Sample 3 - 9494 reads in 5556 unique sequences.
-    ## Sample 4 - 10310 reads in 5448 unique sequences.
+    ## Sample 1 - 12306 reads in 7405 unique sequences.
+    ## Sample 2 - 8807 reads in 5227 unique sequences.
+    ## Sample 3 - 12306 reads in 7405 unique sequences.
+    ## Sample 4 - 9494 reads in 5556 unique sequences.
     ## Sample 5 - 11231 reads in 6358 unique sequences.
-    ## Sample 6 - 8211 reads in 4235 unique sequences.
-    ## Sample 7 - 7988 reads in 4816 unique sequences.
-    ## Sample 8 - 11824 reads in 7240 unique sequences.
-    ## Sample 9 - 8624 reads in 4735 unique sequences.
-    ## Sample 10 - 9127 reads in 4862 unique sequences.
-    ## Sample 11 - 10559 reads in 6642 unique sequences.
-    ## Sample 12 - 6759 reads in 3657 unique sequences.
+    ## Sample 6 - 10310 reads in 5448 unique sequences.
+    ## Sample 7 - 11231 reads in 6358 unique sequences.
+    ## Sample 8 - 8211 reads in 4235 unique sequences.
+    ## Sample 9 - 11824 reads in 7240 unique sequences.
+    ## Sample 10 - 7988 reads in 4816 unique sequences.
+    ## Sample 11 - 11824 reads in 7240 unique sequences.
+    ## Sample 12 - 8624 reads in 4735 unique sequences.
+    ## Sample 13 - 10559 reads in 6642 unique sequences.
+    ## Sample 14 - 9127 reads in 4862 unique sequences.
+    ## Sample 15 - 10559 reads in 6642 unique sequences.
+    ## Sample 16 - 6759 reads in 3657 unique sequences.
 
 ``` r
 dadaRs <- dada(derepRs, err = errR, multithread = TRUE)
 ```
 
-    ## Sample 1 - 8807 reads in 4706 unique sequences.
-    ## Sample 2 - 12306 reads in 6257 unique sequences.
-    ## Sample 3 - 9494 reads in 5092 unique sequences.
-    ## Sample 4 - 10310 reads in 4891 unique sequences.
+    ## Sample 1 - 12306 reads in 6257 unique sequences.
+    ## Sample 2 - 8807 reads in 4706 unique sequences.
+    ## Sample 3 - 12306 reads in 6257 unique sequences.
+    ## Sample 4 - 9494 reads in 5092 unique sequences.
     ## Sample 5 - 11231 reads in 5887 unique sequences.
-    ## Sample 6 - 8211 reads in 4353 unique sequences.
-    ## Sample 7 - 7988 reads in 4617 unique sequences.
-    ## Sample 8 - 11824 reads in 6844 unique sequences.
-    ## Sample 9 - 8624 reads in 3596 unique sequences.
-    ## Sample 10 - 9127 reads in 3582 unique sequences.
-    ## Sample 11 - 10559 reads in 6625 unique sequences.
-    ## Sample 12 - 6759 reads in 2688 unique sequences.
+    ## Sample 6 - 10310 reads in 4891 unique sequences.
+    ## Sample 7 - 11231 reads in 5887 unique sequences.
+    ## Sample 8 - 8211 reads in 4353 unique sequences.
+    ## Sample 9 - 11824 reads in 6844 unique sequences.
+    ## Sample 10 - 7988 reads in 4617 unique sequences.
+    ## Sample 11 - 11824 reads in 6844 unique sequences.
+    ## Sample 12 - 8624 reads in 3596 unique sequences.
+    ## Sample 13 - 10559 reads in 6625 unique sequences.
+    ## Sample 14 - 9127 reads in 3582 unique sequences.
+    ## Sample 15 - 10559 reads in 6625 unique sequences.
+    ## Sample 16 - 6759 reads in 2688 unique sequences.
 
 This took ~7s on a Macbook Pro
 
@@ -454,29 +501,37 @@ T.
 mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose = TRUE, trimOverhang = F)
 ```
 
-    ## 7788 paired-reads (in 65 unique pairings) successfully merged out of 8472 (in 163 pairings) input.
+    ## 10655 paired-reads (in 99 unique pairings) successfully merged out of 11907 (in 204 pairings) input.
 
-    ## 10655 paired-reads (in 99 unique pairings) successfully merged out of 11905 (in 203 pairings) input.
+    ## 7787 paired-reads (in 65 unique pairings) successfully merged out of 8472 (in 163 pairings) input.
 
-    ## 8440 paired-reads (in 77 unique pairings) successfully merged out of 9148 (in 168 pairings) input.
+    ## 10655 paired-reads (in 99 unique pairings) successfully merged out of 11907 (in 204 pairings) input.
 
-    ## 9582 paired-reads (in 61 unique pairings) successfully merged out of 10078 (in 146 pairings) input.
+    ## 8429 paired-reads (in 76 unique pairings) successfully merged out of 9149 (in 169 pairings) input.
 
-    ## 9578 paired-reads (in 86 unique pairings) successfully merged out of 10905 (in 219 pairings) input.
+    ## 9505 paired-reads (in 85 unique pairings) successfully merged out of 10906 (in 220 pairings) input.
 
-    ## 7710 paired-reads (in 42 unique pairings) successfully merged out of 8037 (in 106 pairings) input.
+    ## 9583 paired-reads (in 61 unique pairings) successfully merged out of 10079 (in 146 pairings) input.
 
-    ## 7425 paired-reads (in 71 unique pairings) successfully merged out of 7729 (in 150 pairings) input.
+    ## 9505 paired-reads (in 85 unique pairings) successfully merged out of 10906 (in 220 pairings) input.
 
-    ## 10844 paired-reads (in 101 unique pairings) successfully merged out of 11493 (in 210 pairings) input.
+    ## 7710 paired-reads (in 42 unique pairings) successfully merged out of 8038 (in 107 pairings) input.
 
-    ## 7946 paired-reads (in 74 unique pairings) successfully merged out of 8376 (in 151 pairings) input.
+    ## 10855 paired-reads (in 101 unique pairings) successfully merged out of 11486 (in 209 pairings) input.
 
-    ## 8644 paired-reads (in 60 unique pairings) successfully merged out of 8897 (in 108 pairings) input.
+    ## 7427 paired-reads (in 71 unique pairings) successfully merged out of 7730 (in 151 pairings) input.
 
-    ## 9365 paired-reads (in 101 unique pairings) successfully merged out of 10226 (in 216 pairings) input.
+    ## 10855 paired-reads (in 101 unique pairings) successfully merged out of 11486 (in 209 pairings) input.
 
-    ## 6403 paired-reads (in 60 unique pairings) successfully merged out of 6603 (in 93 pairings) input.
+    ## 7949 paired-reads (in 74 unique pairings) successfully merged out of 8375 (in 150 pairings) input.
+
+    ## 9363 paired-reads (in 101 unique pairings) successfully merged out of 10226 (in 216 pairings) input.
+
+    ## 8644 paired-reads (in 60 unique pairings) successfully merged out of 8898 (in 108 pairings) input.
+
+    ## 9363 paired-reads (in 101 unique pairings) successfully merged out of 10226 (in 216 pairings) input.
+
+    ## 6389 paired-reads (in 59 unique pairings) successfully merged out of 6596 (in 93 pairings) input.
 
 inspect the merged data frame from the first sample. this will output a
 table. the numbers in the forward and reverse columns tell where those
@@ -489,19 +544,19 @@ head(mergers[[1]])
 ```
 
     ##                                                                                                                                                                                                                                                        sequence
-    ## 1 TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGTTCGTAGGTGGTTGAAAAAGTTGGTGGTGAAATCCCAGAGCTTAACTCTGGAACTGCCATCAAAACTTTTCAGCTAGAGTATGATAGAGGAAAGCAGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAATACCAATTGCGAAGGCAGCTTTCTGGATCATTACTGACACTGAGGAACGAAAGCATGGGTAGCGAAGAGG
-    ## 2 TACGGAGGGTGCAAGCGTTAATCGGAATTACTGGGCGTAAAGCGCGCGTAGGCGGCTCTTTAAGTCGGATGTGAAAGCCCCGGGCTCAACCTGGGAACTGCATCCGATACTGGAGGGCTAGAGTGTAGGAGAGGGAGGTAGAATTCCATGTGTAGCAGTGAAATGCGTAGATATATGGAGGAATACCAGTGGCGAAGGCGGCCTCCTGGCTTAACACTGACGCTGAGGTGCGAAAGCGTGGGGAGCAAACGGG
-    ## 3 TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGTTCGTAGGTGGTTGAAAAAGTTAGTGGTGAAATCCCAGAGCTTAACTCTGGAACTGCCATTAAAACTTTTCAGCTAGAGTATGATAGAGGAAAGCAGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAATACCAATTGCGAAGGCAGCTTTCTGGATCATTACTGACACTGAGGAACGAAAGCATGGGTAGCGAAGAGG
-    ## 4 TACGGGAGTGGCAAGCGTTATCCGGAATTATTGGGCGTAAAGCGTCCGCAGGCGGCCTTTCAAGTCTGCTGTTAAAGCGTGGAGCTTAACTCCATTATGGCAGTGGAAACTGATCGGCTTGAGTATGGTAGGGGCAGAGGGAATTCCCGGTGTAGCGGTGAAATGCGTAGATATCGGGAAGAACACCAGTGGCGAAGGCGCTCTGCTGGGCCATTACTGACGCTCATGGACGAAAGCCAGGGGAGCGAAAGGG
-    ## 5 TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGTTCGTAGGTGGTTGAAAAAGTTGGTGGTGAAATCCCAGAGCTTAACTCTGGAACTGCCATCAAAACTTTTCAGCTAGAGTTTGATAGAGGAAAGCAGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAATACCAATTGCGAAGGCAGCTTTCTGGATCATTACTGACACTGAGGAACGAAAGCATGGGTAGCGAAGAGG
-    ## 6 TACGTAGGGTGCAAGCGTTAATCGGAATTACTGGGCGTAAAGCGTGCGCAGGCAGTTTTATAAGTCAGATGTGAAATCCCCGAGCTCAACTTGGGAACTGCGTTTGAAACTGTAAGACTAGAGTGTGTCAGAGGGGGGTAGAATTCCAAGTGTAGCAGTGAAATGCGTAGAGATTTGGAGGAATACCAATGGCGAAGGCAGCCCCCTGGGATAACACTGACGCTCATGCACGAAAGCGTGGGGAGCAAACAGG
+    ## 1 TACGGGAGTGGCAAGCGTTATCCGGAATTATTGGGCGTAAAGCGTCCGCAGGCGGCCTTTCAAGTCTGCTGTTAAAGCGTGGAGCTTAACTCCATTATGGCAGTGGAAACTGATCGGCTTGAGTATGGTAGGGGCAGAGGGAATTCCCGGTGTAGCGGTGAAATGCGTAGATATCGGGAAGAACACCAGTGGCGAAGGCGCTCTGCTGGGCCATTACTGACGCTCATGGACGAAAGCCAGGGGAGCGAAAGGG
+    ## 2 TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGTTCGTAGGTGGTTGAAAAAGTTGGTGGTGAAATCCCAGAGCTTAACTCTGGAACTGCCATCAAAACTTTTCAGCTAGAGTATGATAGAGGAAAGCAGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAATACCAATTGCGAAGGCAGCTTTCTGGATCATTACTGACACTGAGGAACGAAAGCATGGGTAGCGAAGAGG
+    ## 3 TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGTTCGTAGGTGGTTGAAAAAGTTGGTGGTGAAATCCCAGAGCTTAACTCTGGAACTGCCATCAAAACTTTTCAGCTAGAGTTTGATAGAGGAAAGCAGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAATACCAATTGCGAAGGCAGCTTTCTGGATCATTACTGACACTGAGGAACGAAAGCATGGGTAGCGAAGAGG
+    ## 4 TACGGGAGTGGCAAGCGTTATCCGGAATTATTGGGCGTAAAGCGTCCGCAGGCGGCCTTTCAAGTCTGCTGTTAAAGCGTGGAGCTTAACTCCATCATGGCAGTGGAAACTGATCGGCTTGAGTATGGTAGGGGCAGAGGGAATTCCCGGTGTAGCGGTGAAATGCGTAGATATCGGGAAGAACACCAGTGGCGAAGGCGCTCTGCTGGGCCATTACTGACGCTCATGGACGAAAGCCAGGGGAGCGAAAGGG
+    ## 5 TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGCTCGTAGGTGGTTAAAAAAGTTGATGGTGAAATCCCAAGGCTCAACCTTGGAACTGCCATCAAAACTTTTTAGCTAGAGTGTGATAGAGGTAAGTGGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAACACCAAATGCGAAGGCAACTTACTGGGTCACTACTGACACTGAGGAGCGAAAGCATGGGTAGCGAAGAGG
+    ## 6 TACGAAGGGACCTAGCGTAGTTCGGAATTACTGGGCTTAAAGAGTTCGTAGGTGGTTGAAAAAGTTAGTGGTGAAATCCCAGAGCTTAACTCTGGAACTGCCATTAAAACTTTTCAGCTAGAGTATGATAGAGGAAAGCAGAATTTCTAGTGTAGAGGTGAAATTCGTAGATATTAGAAAGAATACCAATTGCGAAGGCAGCTTTCTGGATCATTACTGACACTGAGGAACGAAAGCATGGGTAGCGAAGAGG
     ##   abundance forward reverse nmatch nmismatch nindel prefer accept
-    ## 1       886       2       1    137         0      0      2   TRUE
-    ## 2       729       1       2    137         0      0      2   TRUE
-    ## 3       608       3      14    137         0      0      2   TRUE
-    ## 4       562       4       3    137         0      0      2   TRUE
-    ## 5       508       5      15    137         0      0      2   TRUE
-    ## 6       345       6       5    137         0      0      1   TRUE
+    ## 1      1906       1       1    137         0      0      2   TRUE
+    ## 2      1010       2       2    137         0      0      2   TRUE
+    ## 3       903       3       3    137         0      0      2   TRUE
+    ## 4       502      60       1    137         0      0      2   TRUE
+    ## 5       497       4       4    137         0      0      2   TRUE
+    ## 6       401       5      51    137         0      0      2   TRUE
 
 save the unassigned merged reads
 
@@ -517,7 +572,7 @@ seqtab <- makeSequenceTable(mergers)
 dim(seqtab) # samples by unique sequence
 ```
 
-    ## [1]  12 282
+    ## [1]  16 280
 
 check the distribution of sequence lengths
 
@@ -527,7 +582,7 @@ table(nchar(getSequences(seqtab)))
 
     ## 
     ## 240 252 253 254 258 
-    ##   2   2 268   9   1
+    ##   2   2 266   9   1
 
 # Remove the Chimeras
 
@@ -539,13 +594,13 @@ artefacts that need to be removed.
 seqtab.nochim <- removeBimeraDenovo(seqtab, verbose = TRUE)
 ```
 
-    ## Identified 6 bimeras out of 282 input sequences.
+    ## Identified 6 bimeras out of 280 input sequences.
 
 ``` r
 dim(seqtab.nochim)
 ```
 
-    ## [1]  12 276
+    ## [1]  16 274
 
 check the proportion of sequences that are not chimeras
 
@@ -553,7 +608,7 @@ check the proportion of sequences that are not chimeras
 sum(seqtab.nochim)/sum(seqtab)
 ```
 
-    ## [1] 0.9982085
+    ## [1] 0.9985554
 
 # Assign taxonomy using a reference database
 
