@@ -216,7 +216,7 @@ merge the overlapping reads -> this will also decrease the number of sequence va
 If you above you had hits of the reverse complement in the FWD.ReverseReads and the REV.ForwardReads, you can trim them here by adding trimOverhang = T.
 
 ```{r}
-mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose = TRUE, trimOverhang = F)
+mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose = TRUE, trimOverhang = T)
 ```
 
 inspect the merged data frame from the first sample. this will output a table. the numbers in the forward and reverse columns tell where those sequences are in the dadaFs and dadaRs files. nmatch is how many bases matched. we uniformly trimmed the amplicons so they should all be the same. 
@@ -229,6 +229,7 @@ save the unassigned merged reads
 
 ```{r}
 saveRDS(mergers, "~/GITHUB/eemb144l/Output_Data/week5/dada_merged.rds")
+saveRDS(mergers, "~/GITHUB/eemb144l/Input_Data/week6/dada_merged.rds")
 ```
 
 
@@ -278,6 +279,9 @@ these are the tables you want to save!!
 ```{r}
 write.table(t(seqtab.nochim), "~/GITHUB/eemb144l/Output_Data/week5/seqtab-nochimtaxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
 write.table(taxa,"~/GITHUB/eemb144l/Output_Data/week5/taxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
+
+write.table(t(seqtab.nochim), "~/GITHUB/eemb144l/Input_Data/week6/seqtab-nochimtaxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
+write.table(taxa,"~/GITHUB/eemb144l/Input_Data/week6/taxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
 ```
 
 

@@ -120,8 +120,6 @@ fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 filterAndTrim(fwd = file.path(fnFs), filt = fnFs.filtN, rev = file.path(fnRs), filt.rev = fnRs.filtN, maxN = 0)
 ```
 
-    ## Creating output directory: /Users/nicholasbaetge/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtN
-
 # Remove primers
 
 This part searches for primers in all the orientations and removes them
@@ -226,11 +224,7 @@ important for
 
 ``` r
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen = c(240,150),  maxN = 0, maxEE = c(2,2), truncQ = 2, rm.phix = TRUE, compress = TRUE) 
-```
 
-    ## Creating output directory: /Users/nicholasbaetge/GITHUB/eemb144l/Input_Data/week5/ACIDD_Remin_fastq/filtered
-
-``` r
 #look at the output. this tells you how many reads were removed. 
 readsinout <- out
 ```
@@ -498,7 +492,7 @@ by adding trimOverhang =
 T.
 
 ``` r
-mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose = TRUE, trimOverhang = F)
+mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose = TRUE, trimOverhang = T)
 ```
 
     ## 10655 paired-reads (in 99 unique pairings) successfully merged out of 11907 (in 204 pairings) input.
@@ -562,6 +556,7 @@ save the unassigned merged reads
 
 ``` r
 saveRDS(mergers, "~/GITHUB/eemb144l/Output_Data/week5/dada_merged.rds")
+saveRDS(mergers, "~/GITHUB/eemb144l/Input_Data/week6/dada_merged.rds")
 ```
 
 construct a sequence table of our samples that is analagous to the “OTU
@@ -572,7 +567,7 @@ seqtab <- makeSequenceTable(mergers)
 dim(seqtab) # samples by unique sequence
 ```
 
-    ## [1]  16 280
+    ## [1]  16 279
 
 check the distribution of sequence lengths
 
@@ -581,8 +576,8 @@ table(nchar(getSequences(seqtab)))
 ```
 
     ## 
-    ## 240 252 253 254 258 
-    ##   2   2 266   9   1
+    ## 229 252 253 254 258 
+    ##   1   2 266   9   1
 
 # Remove the Chimeras
 
@@ -594,13 +589,13 @@ artefacts that need to be removed.
 seqtab.nochim <- removeBimeraDenovo(seqtab, verbose = TRUE)
 ```
 
-    ## Identified 6 bimeras out of 280 input sequences.
+    ## Identified 6 bimeras out of 279 input sequences.
 
 ``` r
 dim(seqtab.nochim)
 ```
 
-    ## [1]  16 274
+    ## [1]  16 273
 
 check the proportion of sequences that are not chimeras
 
@@ -630,4 +625,7 @@ save\!\!
 ``` r
 write.table(t(seqtab.nochim), "~/GITHUB/eemb144l/Output_Data/week5/seqtab-nochimtaxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
 write.table(taxa,"~/GITHUB/eemb144l/Output_Data/week5/taxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
+
+write.table(t(seqtab.nochim), "~/GITHUB/eemb144l/Input_Data/week6/seqtab-nochimtaxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
+write.table(taxa,"~/GITHUB/eemb144l/Input_Data/week6/taxa.txt", sep = "\t", row.names = TRUE, col.names = NA, quote = FALSE)
 ```
